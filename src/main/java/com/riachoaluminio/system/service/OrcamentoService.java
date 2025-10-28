@@ -12,13 +12,13 @@ import java.util.List;
 
 @Service
 public class OrcamentoService {
-    private final OrcamentoRepository orcamentoRepository;
-    private final ClienteRepository clienteRepository;
+    private final OrcamentoRepository orcamentoRepository; // Bean injetado: OrcamentoRepository, responsável pelo acesso aos dados de orçamentos
+    private final ClienteRepository clienteRepository; // Bean injetado: ClienteRepository, responsável pelo acesso aos dados de clientes
 
     @Autowired
     public OrcamentoService(OrcamentoRepository orcamentoRepository, ClienteRepository clienteRepository) {
-        this.orcamentoRepository = orcamentoRepository;
-        this.clienteRepository = clienteRepository;
+        this.orcamentoRepository = orcamentoRepository; // Atribuindo OrcamentoRepository injetado ao atributo da classe
+        this.clienteRepository = clienteRepository; // Atribuindo ClienteRepository injetado ao atributo da classe
     }
 
     public List<Orcamento> listarTodos() {

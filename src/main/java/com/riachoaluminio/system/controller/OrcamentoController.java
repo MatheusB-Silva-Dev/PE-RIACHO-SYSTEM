@@ -17,12 +17,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/orcamentos")
 public class OrcamentoController {
-    private final OrcamentoService orcamentoService;
-    private final PdfOrcamentoService pdfOrcamentoService;
+    private final OrcamentoService orcamentoService; // Bean injetado: OrcamentoService, responsável pela lógica de negócios de orçamentos
+    private final PdfOrcamentoService pdfOrcamentoService; // Bean injetado: PdfOrcamentoService, responsável pela geração de PDFs de orçamentos
 
+    // Construtor para injeção de dependência via constructor injection
     public OrcamentoController(OrcamentoService orcamentoService, PdfOrcamentoService pdfOrcamentoService) {
-        this.orcamentoService = orcamentoService;
-        this.pdfOrcamentoService = pdfOrcamentoService;
+        this.orcamentoService = orcamentoService; // Atribuindo OrcamentoService injetado ao atributo da classe
+        this.pdfOrcamentoService = pdfOrcamentoService; // Atribuindo PdfOrcamentoService injetado ao atributo da classe
     }
 
     @GetMapping

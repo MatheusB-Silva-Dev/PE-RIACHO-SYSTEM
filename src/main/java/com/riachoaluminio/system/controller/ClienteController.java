@@ -10,10 +10,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/clientes")
 public class ClienteController {
-    private final ClienteService clienteService;
 
+    private final ClienteService clienteService; // Bean injetado: ClienteService, usado para gerenciar a lógica de negócios dos clientes
+
+    // Construtor para injeção de dependencia via construtor
     public ClienteController(ClienteService clienteService) {
-        this.clienteService = clienteService;
+        this.clienteService = clienteService; // Atribuindo a dependência injetada ao atributo da classe
     }
 
     @GetMapping

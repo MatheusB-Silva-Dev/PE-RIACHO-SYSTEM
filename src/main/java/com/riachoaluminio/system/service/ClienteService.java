@@ -8,10 +8,11 @@ import java.util.List;
 
 @Service
 public class ClienteService {
-    private final ClienteRepository clienteRepository;
+    private final ClienteRepository clienteRepository; // Bean injetado: ClienteRepository, responsável pelo acesso aos dados de clientes
 
+    // Construtor para injeção de dependência via constructor injection
     public ClienteService(ClienteRepository clienteRepository) {
-        this.clienteRepository = clienteRepository;
+        this.clienteRepository = clienteRepository; // Atribuindo ClienteRepository injetado ao atributo da classe
     }
 
     public List<Cliente> listarTodos() {
