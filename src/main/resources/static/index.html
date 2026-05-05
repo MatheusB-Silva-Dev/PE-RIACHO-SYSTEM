@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riacho Alumínio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+          --bg: #07090f;
+          --surface: #0d1120;
+          --surface2: #111828;
+          --border: #1a2340;
+          --accent: #1a4be0;
+          --accent2: #3a6aff;
+          --accent-navy: #0d1b4b;
+          --accent-silver: #8a9bb0;
+          --text: #dce3f0;
+          --text-muted: #5a6a88;
+          --danger: #e05555;
+          --success: #4caf7d;
+          --radius: 10px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+          font-family: 'DM Sans', sans-serif;
+          background: var(--bg);
+          color: var(--text);
+          min-height: 100vh;
+          display: flex;
+        }
+
+        .sidebar {
+          width: 220px;
+          min-height: 100vh;
+          background: var(--surface);
+          border-right: 1px solid var(--border);
+          display: flex;
+          flex-direction: column;
+          padding: 0;
+          position: fixed;
+          top: 0; left: 0; bottom: 0;
+        }
+
+        .sidebar-logo {
+          padding: 28px 24px 20px;
+          border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-logo h1 {
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: 22px;
+          letter-spacing: 2px;
+          color: var(--accent);
+          line-height: 1.1;
+        }
+
+        .sidebar-logo span {
+          font-size: 11px;
+          color: var(--text-muted);
+          letter-spacing: 1px;
+          text-transform: uppercase;
+        }
+
+        .sidebar-nav {
+          flex: 1;
+          padding: 16px 12px;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+
+        .nav-item {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 10px 14px;
+          border-radius: var(--radius);
+          cursor: pointer;
+          color: var(--text-muted);
+          font-size: 14px;
+          font-weight: 500;
+          transition: all 0.2s;
+          border: none;
+          background: none;
+          width: 100%;
+          text-align: left;
+        }
+
+        .nav-item:hover { background: var(--surface2); color: var(--text); }
+        .nav-item.active { background: var(--accent); color: #ffffff; }
+        .nav-item.active .nav-icon { color: #ffffff; }
+
+        .nav-icon { font-size: 18px; }
+
+        .main {
+          margin-left: 220px;
+          flex: 1;
+          padding: 32px;
+          min-height: 100vh;
+        }
+
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.3s ease; }
+
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 28px;
+        }
+
+        .page-title {
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: 32px;
+          letter-spacing: 2px;
+          color: var(--text);
+        }
+
+        .page-title span { color: var(--accent); }
+
+        .btn {
+          padding: 9px 18px;
+          border-radius: var(--radius);
+          border: none;
+          cursor: pointer;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 14px;
+          font-weight: 500;
+          transition: all 0.2s;
+        }
+
+        .btn-primary { background: var(--accent); color: #ffffff; }
+        .btn-primary:hover { background: var(--accent2); }
+        .btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); }
+        .btn-danger:hover { background: var(--danger); color: white; }
+        .btn-ghost { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+        .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-sm { padding: 5px 12px; font-size: 12px; }
+
+        .card {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          padding: 24px;
+          margin-bottom: 20px;
+        }
+
+        .card-title {
+          font-size: 13px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          color: var(--text-muted);
+          margin-bottom: 16px;
+        }
+
+        .table-wrap { overflow-x: auto; }
+
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 14px;
+        }
+
+        thead tr { border-bottom: 1px solid var(--border); }
+
+        th {
+          padding: 10px 14px;
+          text-align: left;
+          font-size: 11px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          color: var(--accent-silver);
+        }
+
+        td {
+          padding: 12px 14px;
+          border-bottom: 1px solid var(--border);
+          vertical-align: middle;
+        }
+
+        tbody tr:hover { background: var(--surface2); }
+        tbody tr:last-child td { border-bottom: none; }
+
+        .badge {
+          display: inline-block;
+          padding: 3px 10px;
+          border-radius: 20px;
+          font-size: 11px;
+          font-weight: 600;
+        }
+
+        .badge-accent { background: rgba(26,75,224,0.15); color: var(--accent2); }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+        .form-full { grid-column: 1 / -1; }
+
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+
+        label {
+          font-size: 12px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.8px;
+          color: var(--accent-silver);
+        }
+
+        input, select, textarea {
+          background: var(--surface2);
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          padding: 10px 14px;
+          color: var(--text);
+          font-family: 'DM Sans', sans-serif;
+          font-size: 14px;
+          transition: border-color 0.2s;
+          width: 100%;
+        }
+
+        input:focus, select:focus, textarea:focus {
+          outline: none;
+          border-color: var(--accent);
+        }
+
+        select option { background: var(--surface2); }
+
+        .items-table-wrap {
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          overflow: hidden;
+        }
+
+        .items-table th {
+          background: var(--surface2);
+          padding: 10px 12px;
+        }
+
+        .items-table td { padding: 8px 12px; }
+        .items-table input { padding: 7px 10px; font-size: 13px; }
+
+        .btn-icon {
+          background: none;
+          border: none;
+          cursor: pointer;
+          color: var(--danger);
+          font-size: 16px;
+          padding: 4px 8px;
+          border-radius: 6px;
+          transition: background 0.2s;
+        }
+
+        .btn-icon:hover { background: rgba(224,85,85,0.1); }
+
+        .modal-overlay {
+          display: none;
+          position: fixed;
+          inset: 0;
+          background: rgba(0,0,0,0.8);
+          z-index: 100;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .modal-overlay.open { display: flex; }
+
+        .modal {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: 14px;
+          padding: 28px;
+          width: 90%;
+          max-width: 560px;
+          max-height: 90vh;
+          overflow-y: auto;
+          animation: slideUp 0.25s ease;
+        }
+
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 20px;
+        }
+
+        .modal-title {
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: 22px;
+          letter-spacing: 1px;
+          color: var(--accent);
+        }
+
+        .modal-close {
+          background: none;
+          border: none;
+          color: var(--text-muted);
+          font-size: 20px;
+          cursor: pointer;
+          line-height: 1;
+        }
+
+        .modal-footer {
+          display: flex;
+          gap: 10px;
+          justify-content: flex-end;
+          margin-top: 20px;
+        }
+
+        .toast-wrap {
+          position: fixed;
+          bottom: 24px;
+          right: 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          z-index: 999;
+        }
+
+        .toast {
+          padding: 12px 18px;
+          border-radius: var(--radius);
+          font-size: 13px;
+          font-weight: 500;
+          animation: toastIn 0.3s ease;
+          max-width: 300px;
+        }
+
+        .toast-success { background: var(--success); color: white; }
+        .toast-error { background: var(--danger); color: white; }
+
+        @keyframes toastIn {
+          from { opacity: 0; transform: translateX(20px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+
+        .empty {
+          text-align: center;
+          padding: 48px 24px;
+          color: var(--text-muted);
+        }
+
+        .empty-icon { font-size: 40px; margin-bottom: 12px; }
+        .empty p { font-size: 14px; }
+
+        .stats-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 16px;
+          margin-bottom: 24px;
+        }
+
+        .stat-card {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          padding: 20px 24px;
+          border-left: 3px solid var(--accent);
+        }
+
+        .stat-label {
+          font-size: 11px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          color: var(--accent-silver);
+          margin-bottom: 8px;
+        }
+
+        .stat-value {
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: 36px;
+          color: var(--accent);
+          letter-spacing: 1px;
+        }
+
+        .divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+        .modal-lg { max-width: 860px; }
+
+        .section-label {
+          font-size: 11px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 1.2px;
+          color: var(--accent);
+          margin-bottom: 14px;
+          margin-top: 20px;
+        }
+
+        .valor-total-display {
+          background: var(--accent-navy);
+          border: 1px solid var(--accent);
+          border-radius: var(--radius);
+          padding: 12px 18px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-top: 16px;
+        }
+
+        .valor-total-display span:first-child {
+          font-size: 13px;
+          color: var(--accent-silver);
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          font-weight: 600;
+        }
+
+        .valor-total-display span:last-child {
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: 24px;
+          color: var(--accent2);
+          letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <img src="logo.png" alt="Riacho Alumínio" style="width:100%;max-width:170px;display:block;">
+        <span style="margin-top:8px;display:block">Sistema de Gestão</span>
+    </div>
+    <nav class="sidebar-nav">
+        <button class="nav-item active" onclick="navigate('dashboard')">
+            <span class="nav-icon">⬛</span> Dashboard
+        </button>
+        <button class="nav-item" onclick="navigate('orcamentos')">
+            <span class="nav-icon">📄</span> Orçamentos
+        </button>
+        <button class="nav-item" onclick="navigate('produtos')">
+            <span class="nav-icon">📦</span> Produtos
+        </button>
+        <button class="nav-item" onclick="navigate('clientes')">
+            <span class="nav-icon">👤</span> Clientes
+        </button>
+    </nav>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+    <!-- DASHBOARD -->
+    <div id="page-dashboard" class="page active">
+        <div class="page-header">
+            <h2 class="page-title">DASH<span>BOARD</span></h2>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total de Orçamentos</div>
+                <div class="stat-value" id="stat-orcamentos">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Produtos Cadastrados</div>
+                <div class="stat-value" id="stat-produtos">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Clientes</div>
+                <div class="stat-value" id="stat-clientes">—</div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-title">Últimos Orçamentos</div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Cliente</th>
+                        <th>Vendedor</th>
+                        <th>Data</th>
+                        <th>Total</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody id="dashboard-orcamentos"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ORÇAMENTOS -->
+    <div id="page-orcamentos" class="page">
+        <div class="page-header">
+            <h2 class="page-title">ORÇA<span>MENTOS</span></h2>
+            <button class="btn btn-primary" onclick="abrirModalOrcamento()">+ Novo Orçamento</button>
+        </div>
+        <div class="card">
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Cliente</th>
+                        <th>Vendedor</th>
+                        <th>Prazo</th>
+                        <th>Pagamento</th>
+                        <th>Data</th>
+                        <th>Total</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody id="tabela-orcamentos"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRODUTOS -->
+    <div id="page-produtos" class="page">
+        <div class="page-header">
+            <h2 class="page-title">CATÁ<span>LOGO</span></h2>
+            <button class="btn btn-primary" onclick="abrirModalProduto()">+ Novo Produto</button>
+        </div>
+        <div class="card">
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Modelo</th>
+                        <th>Material</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody id="tabela-produtos"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- CLIENTES -->
+    <div id="page-clientes" class="page">
+        <div class="page-header">
+            <h2 class="page-title">CLIEN<span>TES</span></h2>
+            <button class="btn btn-primary" onclick="abrirModalCliente()">+ Novo Cliente</button>
+        </div>
+        <div class="card">
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nome</th>
+                        <th>Telefone</th>
+                        <th>E-mail</th>
+                        <th>Endereço</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody id="tabela-clientes"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<!-- MODAL PRODUTO -->
+<div class="modal-overlay" id="modal-produto">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="modal-title" id="modal-produto-title">NOVO PRODUTO</span>
+            <button class="modal-close" onclick="fecharModal('modal-produto')">✕</button>
+        </div>
+        <input type="hidden" id="produto-id">
+        <div class="form-grid">
+            <div class="form-group form-full">
+                <label>Modelo</label>
+                <input type="text" id="produto-modelo" placeholder="Ex: Porta de veneziana para banheiro">
+            </div>
+            <div class="form-group form-full">
+                <label>Material</label>
+                <input type="text" id="produto-material" placeholder="Ex: Suprema branca">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="fecharModal('modal-produto')">Cancelar</button>
+            <button class="btn btn-primary" onclick="salvarProduto()">Salvar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL CLIENTE -->
+<div class="modal-overlay" id="modal-cliente">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="modal-title" id="modal-cliente-title">NOVO CLIENTE</span>
+            <button class="modal-close" onclick="fecharModal('modal-cliente')">✕</button>
+        </div>
+        <input type="hidden" id="cliente-id">
+        <div class="form-grid">
+            <div class="form-group form-full">
+                <label>Nome</label>
+                <input type="text" id="cliente-nome" placeholder="Nome completo">
+            </div>
+            <div class="form-group">
+                <label>Telefone</label>
+                <input type="text" id="cliente-telefone" placeholder="(00) 00000-0000">
+            </div>
+            <div class="form-group">
+                <label>E-mail</label>
+                <input type="email" id="cliente-email" placeholder="email@exemplo.com">
+            </div>
+            <div class="form-group form-full">
+                <label>Endereço</label>
+                <input type="text" id="cliente-endereco" placeholder="Rua, número, bairro">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="fecharModal('modal-cliente')">Cancelar</button>
+            <button class="btn btn-primary" onclick="salvarCliente()">Salvar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL ORÇAMENTO -->
+<div class="modal-overlay" id="modal-orcamento">
+    <div class="modal modal-lg">
+        <div class="modal-header">
+            <!-- ✏️ ALTERADO: título dinâmico via id -->
+            <span class="modal-title" id="modal-orcamento-title">NOVO ORÇAMENTO</span>
+            <button class="modal-close" onclick="fecharModal('modal-orcamento')">✕</button>
+        </div>
+
+        <p class="section-label">Dados do Cliente</p>
+        <div class="form-grid cols-3">
+            <div class="form-group">
+                <label>Nome</label>
+                <input type="text" id="orc-cliente-nome" placeholder="Nome">
+            </div>
+            <div class="form-group">
+                <label>Telefone</label>
+                <input type="text" id="orc-cliente-telefone" placeholder="Telefone">
+            </div>
+            <div class="form-group">
+                <label>E-mail</label>
+                <input type="email" id="orc-cliente-email" placeholder="E-mail">
+            </div>
+            <div class="form-group form-full">
+                <label>Endereço</label>
+                <input type="text" id="orc-cliente-endereco" placeholder="Endereço">
+            </div>
+        </div>
+
+        <p class="section-label">Dados do Orçamento</p>
+        <div class="form-grid cols-3">
+            <div class="form-group">
+                <label>Prazo de Entrega (dias)</label>
+                <input type="number" id="orc-prazo" placeholder="Ex: 30">
+            </div>
+            <div class="form-group">
+                <label>Vendedor</label>
+                <input type="text" id="orc-vendedor" placeholder="Nome do vendedor">
+            </div>
+            <div class="form-group">
+                <label>Forma de Pagamento</label>
+                <input type="text" id="orc-pagamento" placeholder="Ex: À vista">
+            </div>
+        </div>
+
+        <p class="section-label">Itens do Orçamento</p>
+        <div class="items-table-wrap">
+            <table class="items-table">
+                <thead>
+                <tr>
+                    <th>Produto</th>
+                    <th>Largura</th>
+                    <th>Altura</th>
+                    <th>Qtd</th>
+                    <th>Valor Unit.</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody id="orc-itens"></tbody>
+            </table>
+        </div>
+        <button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="adicionarItemOrcamento()">+ Adicionar Item</button>
+
+        <div class="valor-total-display">
+            <span>Total do Orçamento</span>
+            <span id="orc-total-display">R$ 0,00</span>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="fecharModal('modal-orcamento')">Cancelar</button>
+            <!-- ✏️ ALTERADO: texto do botão dinâmico via id -->
+            <button class="btn btn-primary" id="btn-salvar-orcamento" onclick="salvarOrcamento()">Gerar PDF</button>
+        </div>
+    </div>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-wrap" id="toasts"></div>
+
+<script>
+    const API = 'http://localhost:8080';
+    let produtos = [];
+    let editandoProdutoId = null;
+    let editandoClienteId = null;
+    let editandoOrcamentoId = null; // ✏️ NOVO: controla modo edição do orçamento
+
+    // NAVIGATION
+    function navigate(page) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('page-' + page).classList.add('active');
+      event.currentTarget.classList.add('active');
+      if (page === 'dashboard') carregarDashboard();
+      if (page === 'orcamentos') carregarOrcamentos();
+      if (page === 'produtos') carregarProdutos();
+      if (page === 'clientes') carregarClientes();
+    }
+
+    // TOAST
+    function toast(msg, tipo = 'success') {
+      const wrap = document.getElementById('toasts');
+      const el = document.createElement('div');
+      el.className = `toast toast-${tipo}`;
+      el.textContent = msg;
+      wrap.appendChild(el);
+      setTimeout(() => el.remove(), 3500);
+    }
+
+    // MODAL
+    function abrirModal(id) {
+      document.getElementById(id).classList.add('open');
+    }
+
+    function fecharModal(id) {
+      document.getElementById(id).classList.remove('open');
+    }
+
+    // FORMAT
+    function formatBRL(val) {
+      return Number(val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function formatDate(str) {
+      if (!str) return '—';
+      const d = new Date(str);
+      return d.toLocaleDateString('pt-BR');
+    }
+
+    // ===================== DASHBOARD =====================
+    async function carregarDashboard() {
+      try {
+        const [orc, prod, cli] = await Promise.all([
+          fetch(`${API}/orcamentos`).then(r => r.json()),
+          fetch(`${API}/produtos`).then(r => r.json()),
+          fetch(`${API}/clientes`).then(r => r.json()),
+        ]);
+        document.getElementById('stat-orcamentos').textContent = orc.length;
+        document.getElementById('stat-produtos').textContent = prod.length;
+        document.getElementById('stat-clientes').textContent = cli.length;
+
+        const tbody = document.getElementById('dashboard-orcamentos');
+        const recentes = orc.slice(-5).reverse();
+        tbody.innerHTML = recentes.length ? recentes.map(o => `
+          <tr>
+            <td><span class="badge badge-accent">#${o.id}</span></td>
+            <td>${o.cliente?.nome || '—'}</td>
+            <td>${o.vendedor || '—'}</td>
+            <td>${formatDate(o.dataCriacao)}</td>
+            <td>${formatBRL(o.valorTotal)}</td>
+            <td><button class="btn btn-ghost btn-sm" onclick="gerarPdf(${o.id})">PDF</button></td>
+          </tr>`).join('') : `<tr><td colspan="6"><div class="empty"><div class="empty-icon">📄</div><p>Nenhum orçamento ainda</p></div></td></tr>`;
+      } catch(e) {
+        toast('Erro ao carregar dashboard', 'error');
+      }
+    }
+
+    // ===================== PRODUTOS =====================
+    function abrirUploadImagem(id) {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = async () => {
+        const file = input.files[0];
+        if (!file) return;
+        const formData = new FormData();
+        formData.append('file', file);
+        try {
+          await fetch(`${API}/produtos/${id}/imagem`, { method: 'POST', body: formData });
+          toast('Imagem enviada com sucesso!');
+          carregarProdutos();
+        } catch(e) {
+          toast('Erro ao enviar imagem', 'error');
+        }
+      };
+      input.click();
+    }
+
+    async function carregarProdutos() {
+      try {
+        produtos = await fetch(`${API}/produtos`).then(r => r.json());
+        const tbody = document.getElementById('tabela-produtos');
+        tbody.innerHTML = produtos.length ? produtos.map(p => `
+          <tr>
+            <td><span class="badge badge-accent">#${p.id}</span></td>
+            <td>${p.modelo || '—'}</td>
+            <td>${p.material || '—'}</td>
+            <td style="display:flex;gap:8px">
+              <button class="btn btn-ghost btn-sm" onclick="abrirUploadImagem(${p.id})">🖼️ Imagem</button>
+              <button class="btn btn-ghost btn-sm" onclick="editarProduto(${p.id})">Editar</button>
+              <button class="btn btn-danger btn-sm" onclick="excluirProduto(${p.id})">Excluir</button>
+            </td>
+          </tr>`).join('') : `<tr><td colspan="4"><div class="empty"><div class="empty-icon">📦</div><p>Nenhum produto cadastrado</p></div></td></tr>`;
+      } catch(e) {
+        toast('Erro ao carregar produtos', 'error');
+      }
+    }
+
+    function abrirModalProduto() {
+      editandoProdutoId = null;
+      document.getElementById('modal-produto-title').textContent = 'NOVO PRODUTO';
+      document.getElementById('produto-id').value = '';
+      document.getElementById('produto-modelo').value = '';
+      document.getElementById('produto-material').value = '';
+      abrirModal('modal-produto');
+    }
+
+    function editarProduto(id) {
+      const p = produtos.find(x => x.id === id);
+      if (!p) return;
+      editandoProdutoId = id;
+      document.getElementById('modal-produto-title').textContent = 'EDITAR PRODUTO';
+      document.getElementById('produto-modelo').value = p.modelo || '';
+      document.getElementById('produto-material').value = p.material || '';
+      abrirModal('modal-produto');
+    }
+
+    async function salvarProduto() {
+      const body = {
+        modelo: document.getElementById('produto-modelo').value,
+        material: document.getElementById('produto-material').value,
+      };
+      try {
+        if (editandoProdutoId) {
+          await fetch(`${API}/produtos/${editandoProdutoId}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+          toast('Produto atualizado!');
+        } else {
+          await fetch(`${API}/produtos`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+          toast('Produto cadastrado!');
+        }
+        fecharModal('modal-produto');
+        carregarProdutos();
+      } catch(e) {
+        toast('Erro ao salvar produto', 'error');
+      }
+    }
+
+    async function excluirProduto(id) {
+      if (!confirm('Deseja excluir este produto?')) return;
+      try {
+        await fetch(`${API}/produtos/${id}`, { method: 'DELETE' });
+        toast('Produto excluído!');
+        carregarProdutos();
+      } catch(e) {
+        toast('Erro ao excluir', 'error');
+      }
+    }
+
+    // ===================== CLIENTES =====================
+    async function carregarClientes() {
+      try {
+        const clientes = await fetch(`${API}/clientes`).then(r => r.json());
+        const tbody = document.getElementById('tabela-clientes');
+        tbody.innerHTML = clientes.length ? clientes.map(c => `
+          <tr>
+            <td><span class="badge badge-accent">#${c.id}</span></td>
+            <td>${c.nome || '—'}</td>
+            <td>${c.telefone || '—'}</td>
+            <td>${c.email || '—'}</td>
+            <td>${c.endereco || '—'}</td>
+            <td style="display:flex;gap:8px">
+              <button class="btn btn-ghost btn-sm" onclick="editarCliente(${c.id})">Editar</button>
+              <button class="btn btn-danger btn-sm" onclick="excluirCliente(${c.id})">Excluir</button>
+            </td>
+          </tr>`).join('') : `<tr><td colspan="6"><div class="empty"><div class="empty-icon">👤</div><p>Nenhum cliente cadastrado</p></div></td></tr>`;
+      } catch(e) {
+        toast('Erro ao carregar clientes', 'error');
+      }
+    }
+
+    function abrirModalCliente() {
+      editandoClienteId = null;
+      document.getElementById('modal-cliente-title').textContent = 'NOVO CLIENTE';
+      ['nome','telefone','email','endereco'].forEach(f => document.getElementById('cliente-' + f).value = '');
+      abrirModal('modal-cliente');
+    }
+
+    async function editarCliente(id) {
+      try {
+        const clientes = await fetch(`${API}/clientes`).then(r => r.json());
+        const c = clientes.find(x => x.id === id);
+        if (!c) return;
+        editandoClienteId = id;
+        document.getElementById('modal-cliente-title').textContent = 'EDITAR CLIENTE';
+        document.getElementById('cliente-nome').value = c.nome || '';
+        document.getElementById('cliente-telefone').value = c.telefone || '';
+        document.getElementById('cliente-email').value = c.email || '';
+        document.getElementById('cliente-endereco').value = c.endereco || '';
+        abrirModal('modal-cliente');
+      } catch(e) { toast('Erro', 'error'); }
+    }
+
+    async function salvarCliente() {
+      const body = {
+        nome: document.getElementById('cliente-nome').value,
+        telefone: document.getElementById('cliente-telefone').value,
+        email: document.getElementById('cliente-email').value,
+        endereco: document.getElementById('cliente-endereco').value,
+      };
+      try {
+        if (editandoClienteId) {
+          await fetch(`${API}/clientes/${editandoClienteId}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+          toast('Cliente atualizado!');
+        } else {
+          await fetch(`${API}/clientes`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+          toast('Cliente cadastrado!');
+        }
+        fecharModal('modal-cliente');
+        carregarClientes();
+      } catch(e) { toast('Erro ao salvar cliente', 'error'); }
+    }
+
+    async function excluirCliente(id) {
+      if (!confirm('Deseja excluir este cliente?')) return;
+      try {
+        await fetch(`${API}/clientes/${id}`, { method: 'DELETE' });
+        toast('Cliente excluído!');
+        carregarClientes();
+      } catch(e) { toast('Erro ao excluir', 'error'); }
+    }
+
+    // ===================== ORÇAMENTOS =====================
+    async function carregarOrcamentos() {
+      try {
+        const orcamentos = await fetch(`${API}/orcamentos`).then(r => r.json());
+        const tbody = document.getElementById('tabela-orcamentos');
+        tbody.innerHTML = orcamentos.length ? orcamentos.map(o => `
+          <tr>
+            <td><span class="badge badge-accent">#${o.id}</span></td>
+            <td>${o.cliente?.nome || '—'}</td>
+            <td>${o.vendedor || '—'}</td>
+            <td>${o.prazoEntrega ? o.prazoEntrega + ' dias' : '—'}</td>
+            <td>${o.formaPagamento || '—'}</td>
+            <td>${formatDate(o.dataCriacao)}</td>
+            <td>${formatBRL(o.valorTotal)}</td>
+            <td style="display:flex;gap:8px">
+              <button class="btn btn-primary btn-sm" onclick="gerarPdf(${o.id})">📄 PDF</button>
+              <button class="btn btn-ghost btn-sm" onclick="editarOrcamento(${o.id})">✏️ Editar</button>
+              <button class="btn btn-danger btn-sm" onclick="excluirOrcamento(${o.id})">Excluir</button>
+            </td>
+          </tr>`).join('') : `<tr><td colspan="8"><div class="empty"><div class="empty-icon">📄</div><p>Nenhum orçamento cadastrado</p></div></td></tr>`;
+      } catch(e) { toast('Erro ao carregar orçamentos', 'error'); }
+    }
+
+    // ✏️ NOVO: abre o modal no modo edição, populando todos os campos com os dados do orçamento
+    async function editarOrcamento(id) {
+      produtos = await fetch(`${API}/produtos`).then(r => r.json());
+      const orcamentos = await fetch(`${API}/orcamentos`).then(r => r.json());
+      const o = orcamentos.find(x => x.id === id);
+      if (!o) return;
+
+      editandoOrcamentoId = id;
+      document.getElementById('modal-orcamento-title').textContent = 'EDITAR ORÇAMENTO #' + id;
+      document.getElementById('btn-salvar-orcamento').textContent = 'Salvar Alterações';
+
+      // Preenche dados do cliente
+      document.getElementById('orc-cliente-nome').value = o.cliente?.nome || '';
+      document.getElementById('orc-cliente-telefone').value = o.cliente?.telefone || '';
+      document.getElementById('orc-cliente-email').value = o.cliente?.email || '';
+      document.getElementById('orc-cliente-endereco').value = o.cliente?.endereco || '';
+
+      // Preenche dados do orçamento
+      document.getElementById('orc-prazo').value = o.prazoEntrega || '';
+      document.getElementById('orc-vendedor').value = o.vendedor || '';
+      document.getElementById('orc-pagamento').value = o.formaPagamento || '';
+
+      // Preenche itens
+      document.getElementById('orc-itens').innerHTML = '';
+      (o.itens || []).forEach(item => adicionarItemOrcamento(item));
+
+      recalcularTotal();
+      abrirModal('modal-orcamento');
+    }
+
+    async function abrirModalOrcamento() {
+      produtos = await fetch(`${API}/produtos`).then(r => r.json());
+
+      // ✏️ NOVO: reseta o modo edição ao abrir para novo
+      editandoOrcamentoId = null;
+      document.getElementById('modal-orcamento-title').textContent = 'NOVO ORÇAMENTO';
+      document.getElementById('btn-salvar-orcamento').textContent = 'Gerar PDF';
+
+      document.getElementById('orc-itens').innerHTML = '';
+      document.getElementById('orc-total-display').textContent = 'R$ 0,00';
+      ['prazo','vendedor','pagamento','cliente-nome','cliente-telefone','cliente-email','cliente-endereco']
+        .forEach(f => document.getElementById('orc-' + f).value = '');
+      adicionarItemOrcamento();
+      abrirModal('modal-orcamento');
+    }
+
+    // ✏️ ALTERADO: aceita item opcional para pré-preencher ao editar
+    function adicionarItemOrcamento(item = null) {
+      const tbody = document.getElementById('orc-itens');
+      const tr = document.createElement('tr');
+      const opts = produtos.map(p =>
+        `<option value="${p.id}" ${item?.produto?.id === p.id ? 'selected' : ''}>${p.modelo} — ${p.material}</option>`
+      ).join('');
+      tr.innerHTML = `
+        <td><select onchange="recalcularTotal()">${opts || '<option>Cadastre produtos primeiro</option>'}</select></td>
+        <td><input type="number" data-field="largura" placeholder="mm" value="${item?.largura || ''}" oninput="recalcularTotal()"></td>
+        <td><input type="number" data-field="altura" placeholder="mm" value="${item?.altura || ''}" oninput="recalcularTotal()"></td>
+        <td><input type="number" data-field="quantidade" value="${item?.quantidade || 1}" min="1" oninput="recalcularTotal()"></td>
+        <td><input type="number" data-field="valorUnitario" step="0.01" placeholder="0,00" value="${item?.valorUnitario || ''}" oninput="recalcularTotal()"></td>
+        <td><button class="btn-icon" onclick="this.closest('tr').remove();recalcularTotal()">✕</button></td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    function recalcularTotal() {
+      let total = 0;
+      document.querySelectorAll('#orc-itens tr').forEach(tr => {
+        const qty = parseFloat(tr.querySelector('[data-field="quantidade"]')?.value) || 0;
+        const unit = parseFloat(tr.querySelector('[data-field="valorUnitario"]')?.value) || 0;
+        total += qty * unit;
+      });
+      document.getElementById('orc-total-display').textContent = formatBRL(total);
+    }
+
+    async function salvarOrcamento() {
+      const itens = [];
+      let valido = true;
+
+      document.querySelectorAll('#orc-itens tr').forEach(tr => {
+        const select = tr.querySelector('select');
+        if (!select) return;
+        const produtoId = parseInt(select.value);
+        const largura = parseInt(tr.querySelector('[data-field="largura"]')?.value) || null;
+        const altura = parseInt(tr.querySelector('[data-field="altura"]')?.value) || null;
+        const quantidade = parseInt(tr.querySelector('[data-field="quantidade"]')?.value);
+        const valorUnitario = parseFloat(tr.querySelector('[data-field="valorUnitario"]')?.value);
+        if (!produtoId || !quantidade || !valorUnitario) { valido = false; return; }
+        itens.push({ produto: { id: produtoId }, largura, altura, quantidade, valorUnitario });
+      });
+
+      if (!valido || itens.length === 0) {
+        toast('Preencha todos os itens corretamente', 'error');
+        return;
+      }
+
+      const data = {
+        cliente: {
+          nome: document.getElementById('orc-cliente-nome').value,
+          telefone: document.getElementById('orc-cliente-telefone').value,
+          email: document.getElementById('orc-cliente-email').value,
+          endereco: document.getElementById('orc-cliente-endereco').value,
+        },
+        prazoEntrega: parseInt(document.getElementById('orc-prazo').value) || null,
+        vendedor: document.getElementById('orc-vendedor').value,
+        formaPagamento: document.getElementById('orc-pagamento').value,
+        itens,
+      };
+
+      try {
+        // ✏️ ALTERADO: usa PUT se estiver editando, POST se for novo
+        if (editandoOrcamentoId) {
+          await fetch(`${API}/orcamentos/${editandoOrcamentoId}`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+          });
+          fecharModal('modal-orcamento');
+          toast('Orçamento atualizado com sucesso!');
+          carregarOrcamentos();
+        } else {
+          const saved = await fetch(`${API}/orcamentos`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+          }).then(r => r.json());
+          fecharModal('modal-orcamento');
+          toast('Orçamento criado! Gerando PDF...');
+          gerarPdf(saved.id);
+          carregarOrcamentos();
+        }
+      } catch(e) {
+        toast('Erro ao salvar orçamento', 'error');
+      }
+    }
+
+    async function excluirOrcamento(id) {
+      if (!confirm('Deseja excluir este orçamento?')) return;
+      try {
+        await fetch(`${API}/orcamentos/${id}`, { method: 'DELETE' });
+        toast('Orçamento excluído!');
+        carregarOrcamentos();
+      } catch(e) { toast('Erro ao excluir', 'error'); }
+    }
+
+    function gerarPdf(id) {
+      window.open(`${API}/orcamentos/${id}/pdf`, '_blank');
+    }
+
+    // INIT
+    carregarDashboard();
+</script>
+</body>
+</html>

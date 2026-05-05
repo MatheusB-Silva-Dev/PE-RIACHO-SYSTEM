@@ -1,0 +1,17 @@
+
+.mvn/
+
+mvnw
+mvnw.cmd
+
+target/
+*.class
+*.log
+
+*.DS_Store
+*.tmp
+*.swp
+
+!JarParaExecução/
+
+data/
