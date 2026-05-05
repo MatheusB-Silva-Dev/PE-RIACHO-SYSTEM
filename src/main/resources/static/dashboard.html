@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Menu - Riacho Alumínio</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+    }
+    header {
+      background-color: #006699;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    nav {
+      background-color: #007acc;
+    }
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+    nav ul li {
+      flex: 1;
+    }
+    nav ul li a {
+      display: block;
+      padding: 15px;
+      text-align: center;
+      text-decoration: none;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+    nav ul li a:hover {
+      background-color: #005fa3;
+    }
+    .tab-content {
+      display: none;
+      padding: 20px;
+      background-color: #fff;
+      min-height: 300px;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+    .action-buttons button {
+      margin-right: 5px;
+      padding: 5px 10px;
+    }
+    .novo-orcamento {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Menu - Riacho Alumínio</h1>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="#" onclick="showTab('tab-listar-clientes')">Clientes</a></li>
+    <li><a href="#" onclick="showTab('tab-listar-orcamentos')">Orçamentos</a></li>
+    <li><a href="#" onclick="window.location.href='criarOrcamento.html'">Novo Orçamento</a></li>
+  </ul>
+</nav>
+
+<div id="tab-listar-clientes" class="tab-content active">
+  <h2>Listar Clientes</h2>
+  <table id="clientes-table">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nome</th>
+      <th>Telefone</th>
+      <th>Email</th>
+      <th>Endereço</th>
+      <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</div>
+
+<div id="tab-listar-orcamentos" class="tab-content">
+  <h2>Listar Orçamentos</h2>
+  <table id="orcamentos-table">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Cliente</th>
+      <th>Prazo</th>
+      <th>Vendedor</th>
+      <th>Forma de Pagamento</th>
+      <th>Valor Total</th>
+      <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  // Função para alternar entre abas
+  function showTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(tab => {
+      tab.classList.remove('active');
+    });
+    document.getElementById(tabId).classList.add('active');
+  }
+
+  function carregarClientes() {
+    fetch('http://localhost:8080/clientes')
+            .then(response => response.json())
+            .then(data => {
+              const tbody = document.querySelector('#clientes-table tbody');
+              tbody.innerHTML = '';
+              data.forEach(cliente => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+              <td>${cliente.id}</td>
+              <td>${cliente.nome}</td>
+              <td>${cliente.telefone}</td>
+              <td>${cliente.email || ''}</td>
+              <td>${cliente.endereco || cliente.address || ''}</td>
+              <td class="action-buttons">
+                <button onclick="editarCliente(${cliente.id})">Editar</button>
+                <button onclick="excluirCliente(${cliente.id})">Excluir</button>
+              </td>
+            `;
+                tbody.appendChild(tr);
+              });
+            })
+            .catch(error => console.error('Erro ao carregar clientes:', error));
+  }
+
+  function carregarOrcamentos() {
+    fetch('http://localhost:8080/orcamentos')
+            .then(response => response.json())
+            .then(data => {
+              const tbody = document.querySelector('#orcamentos-table tbody');
+              tbody.innerHTML = '';
+              data.forEach(orcamento => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+              <td>${orcamento.id}</td>
+              <td>${orcamento.cliente && orcamento.cliente.nome ? orcamento.cliente.nome : 'N/D'}</td>
+              <td>${orcamento.prazoEntrega || 'N/D'}</td>
+              <td>${orcamento.vendedor || 'N/D'}</td>
+              <td>${orcamento.formaPagamento || 'N/D'}</td>
+              <td>${orcamento.valorTotal || 0}</td>
+              <td class="action-buttons">
+                <button onclick="editarOrcamento(${orcamento.id})">Editar</button>
+                <button onclick="excluirOrcamento(${orcamento.id})">Excluir</button>
+                <button onclick="gerarPdf(${orcamento.id})">Gerar PDF</button>
+              </td>
+            `;
+                tbody.appendChild(tr);
+              });
+            })
+            .catch(error => console.error('Erro ao carregar orçamentos:', error));
+  }
+
+  function editarCliente(id) {
+    window.location.href = `editarCliente.html?id=${id}`;
+  }
+
+  function editarOrcamento(id) {
+    window.location.href = `editarOrcamento.html?id=${id}`;
+  }
+
+
+  function excluirCliente(id) {
+    if (confirm('Deseja realmente excluir este cliente?')) {
+      fetch(`http://localhost:8080/clientes/${id}`, { method: 'DELETE' })
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Erro ao excluir cliente');
+                }
+                carregarClientes();
+              })
+              .catch(error => console.error('Erro ao excluir cliente:', error));
+    }
+  }
+
+  function excluirOrcamento(id) {
+    if (confirm('Deseja realmente excluir este orçamento?')) {
+      fetch(`http://localhost:8080/orcamentos/${id}`, { method: 'DELETE' })
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Erro ao excluir orçamento');
+                }
+                carregarOrcamentos();
+              })
+              .catch(error => console.error('Erro ao excluir orçamento:', error));
+    }
+  }
+
+  function gerarPdf(id) {
+    window.open(`http://localhost:8080/orcamentos/${id}/pdf`, '_blank');
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    carregarClientes();
+    carregarOrcamentos();
+  });
+</script>
+</body>
+</html>

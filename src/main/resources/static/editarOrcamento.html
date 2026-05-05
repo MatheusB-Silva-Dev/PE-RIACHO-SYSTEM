@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Editar Orçamento - Riacho Alumínio</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1 { text-align: center; }
+    fieldset { margin-bottom: 20px; padding: 10px; }
+    label { display: block; margin-top: 10px; }
+    input { width: 300px; padding: 5px; margin-top: 5px; }
+    button { margin-top: 15px; padding: 10px 20px; }
+  </style>
+</head>
+
+<body>
+<h1>Editar Orçamento</h1>
+<form id="editarOrcamentoForm">
+  <fieldset>
+    <legend>Dados do Orçamento</legend>
+    <label for="prazoEntrega">Prazo de Entrega (dias):</label>
+    <input type="number" id="prazoEntrega" name="prazoEntrega" required>
+
+    <label for="vendedor">Vendedor:</label>
+    <input type="text" id="vendedor" name="vendedor">
+
+    <label for="formaPagamento">Forma de Pagamento:</label>
+    <input type="text" id="formaPagamento" name="formaPagamento">
+  </fieldset>
+  <button type="submit">Salvar Alterações</button>
+</form>
+
+<script>
+  function getIdFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('id');
+  }
+
+  const orcamentoId = getIdFromUrl();
+
+  fetch(`http://localhost:8080/orcamentos/${orcamentoId}`)
+          .then(response => response.json())
+          .then(data => {
+            document.getElementById('prazoEntrega').value = data.prazoEntrega || '';
+            document.getElementById('vendedor').value = data.vendedor || '';
+            document.getElementById('formaPagamento').value = data.formaPagamento || '';
+          })
+          .catch(error => console.error('Erro ao buscar orçamento:', error));
+
+  document.getElementById('editarOrcamentoForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const payload = {
+      prazoEntrega: document.getElementById('prazoEntrega').value,
+      vendedor: document.getElementById('vendedor').value,
+      formaPagamento: document.getElementById('formaPagamento').value
+    };
+    fetch(`http://localhost:8080/orcamentos/${orcamentoId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Erro ao atualizar o orçamento');
+              }
+              alert('Orçamento atualizado com sucesso!');
+              window.location.href = 'dashboard.html';
+            })
+            .catch(error => {
+              console.error(error);
+              alert('Erro: ' + error.message);
+            });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Editar Cliente - Riacho Alumínio</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1 { text-align: center; }
+    fieldset { margin-bottom: 20px; padding: 10px; }
+    label { display: block; margin-top: 10px; }
+    input { width: 300px; padding: 5px; margin-top: 5px; }
+    button { margin-top: 15px; padding: 10px 20px; }
+  </style>
+</head>
+<body>
+<h1>Editar Cliente</h1>
+<form id="editarClienteForm">
+  <fieldset>
+    <legend>Dados do Cliente</legend>
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" name="nome" required>
+
+    <label for="telefone">Telefone:</label>
+    <input type="text" id="telefone" name="telefone" required>
+
+    <label for="email">E-mail:</label>
+    <input type="email" id="email" name="email">
+
+    <label for="endereco">Endereço:</label>
+    <input type="text" id="endereco" name="endereco" required>
+  </fieldset>
+  <button type="submit">Salvar Alterações</button>
+</form>
+
+<script>
+  function getIdFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('id');
+  }
+
+  const clienteId = getIdFromUrl();
+  console.log("ID do cliente obtido da URL:", clienteId);
+
+  if (!clienteId) {
+    console.error("Cliente ID não fornecido na URL.");
+    alert("Erro: Nenhum ID de cliente foi especificado na URL.");
+  } else {
+    // Busca os dados do cliente e popula os campos do formulário
+    fetch(`http://localhost:8080/clientes/${clienteId}`)
+            .then(response => response.json())
+            .then(data => {
+              console.log("Dados retornados pela API:", data);
+              document.getElementById('nome').value = data.nome || '';
+              document.getElementById('telefone').value = data.telefone || '';
+              document.getElementById('email').value = data.email || '';
+              // Se o back-end estiver retornando "address" ao invés de "endereco", utilize-o como fallback:
+              document.getElementById('endereco').value = data.endereco || data.address || '';
+            })
+            .catch(error => console.error('Erro ao buscar cliente:', error));
+  }
+
+  document.getElementById('editarClienteForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const payload = {
+      nome: document.getElementById('nome').value,
+      telefone: document.getElementById('telefone').value,
+      email: document.getElementById('email').value,
+      endereco: document.getElementById('endereco').value
+    };
+
+    console.log("Payload enviado para atualização:", payload);
+
+    fetch(`http://localhost:8080/clientes/${clienteId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Erro ao atualizar o cliente');
+              }
+              alert('Cliente atualizado com sucesso!');
+              window.location.href = 'dashboard.html';
+            })
+            .catch(error => {
+              console.error("Erro ao atualizar o cliente:", error);
+              alert('Erro: ' + error.message);
+            });
+  });
+</script>
+</body>
+</html>

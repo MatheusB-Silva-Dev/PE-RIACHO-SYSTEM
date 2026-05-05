@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Orçamento - Riacho Alumínio</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: auto;
+    }
+    fieldset {
+      margin-bottom: 20px;
+      padding: 10px;
+      box-sizing: border-box;
+      width: 100%;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input:not(#itemsTable input) {
+      width: 100%;
+      max-width: 500px;
+      padding: 5px;
+      margin-top: 5px;
+      box-sizing: border-box;
+    }
+    #itemsTable input {
+      width: 90%;
+      padding: 5px;
+      margin-top: 0;
+      box-sizing: border-box;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      table-layout: fixed;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th, td {
+      padding: 8px;
+      text-align: center;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Orçamento - Riacho Alumínio</h1>
+
+  <form id="orcamentoForm">
+    <fieldset>
+      <legend>Dados do Cliente</legend>
+      <label for="clienteNome">Nome:</label>
+      <input type="text" id="clienteNome" name="clienteNome" required>
+
+      <label for="clienteEndereco">Endereço:</label>
+      <input type="text" id="clienteEndereco" name="clienteEndereco" required>
+
+      <label for="clienteTelefone">Telefone:</label>
+      <input type="text" id="clienteTelefone" name="clienteTelefone" required>
+
+      <label for="clienteEmail">E-mail:</label>
+      <input type="email" id="clienteEmail" name="clienteEmail">
+    </fieldset>
+
+    <fieldset>
+      <legend>Dados do Orçamento</legend>
+      <label for="prazoEntrega">Prazo de Entrega (dias):</label>
+      <input type="number" id="prazoEntrega" name="prazoEntrega" required>
+
+      <label for="vendedor">Vendedor:</label>
+      <input type="text" id="vendedor" name="vendedor">
+
+      <label for="formaPagamento">Forma de Pagamento:</label>
+      <input type="text" id="formaPagamento" name="formaPagamento">
+    </fieldset>
+
+    <fieldset>
+      <legend>Itens do Orçamento</legend>
+      <table id="itemsTable">
+        <thead>
+        <tr>
+          <th>Modelo</th>
+          <th>Material</th>
+          <th>Largura</th>
+          <th>Altura</th>
+          <th>Quantidade</th>
+          <th>Valor Unitário</th>
+        </tr>
+        </thead>
+        <tbody id="itemsTbody">
+        </tbody>
+      </table>
+      <button type="button" id="addItemBtn">Adicionar Item</button>
+    </fieldset>
+
+    <button type="submit">Gerar PDF</button>
+  </form>
+</div>
+
+<script>
+  function addItemRow(item = {}) {
+    const tbody = document.getElementById('itemsTbody');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="text" name="modelo" value="${item.modelo || ''}" required></td>
+      <td><input type="text" name="material" value="${item.material || ''}" required></td>
+      <td><input type="number" name="largura" value="${item.largura || ''}" required></td>
+      <td><input type="number" name="altura" value="${item.altura || ''}" required></td>
+      <td><input type="number" name="quantidade" value="${item.quantidade || 1}" required></td>
+      <td><input type="number" step="0.01" name="valorUnitario" value="${item.valorUnitario || ''}" required></td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+  document.getElementById('addItemBtn').addEventListener('click', function() {
+    addItemRow();
+  });
+
+  addItemRow();
+
+  document.getElementById('orcamentoForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const data = {
+      cliente: {
+        nome: document.getElementById('clienteNome').value,
+        endereco: document.getElementById('clienteEndereco').value,
+        telefone: document.getElementById('clienteTelefone').value,
+        email: document.getElementById('clienteEmail').value
+      },
+      prazoEntrega: document.getElementById('prazoEntrega').value,
+      vendedor: document.getElementById('vendedor').value,
+      formaPagamento: document.getElementById('formaPagamento').value,
+      itens: []
+    };
+
+    const rows = document.querySelectorAll('#itemsTbody tr');
+    rows.forEach(row => {
+      const itemData = {
+        modelo: row.querySelector('input[name="modelo"]').value,
+        material: row.querySelector('input[name="material"]').value,
+        largura: row.querySelector('input[name="largura"]').value,
+        altura: row.querySelector('input[name="altura"]').value,
+        quantidade: row.querySelector('input[name="quantidade"]').value,
+        valorUnitario: row.querySelector('input[name="valorUnitario"]').value
+      };
+      data.itens.push(itemData);
+    });
+
+    // Salva o orçamento (POST) e, em seguida, gera o PDF usando o ID retornado
+    fetch('http://localhost:8080/orcamentos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+            .then(response => response.json())
+            .then(savedOrcamento => {
+              return fetch(`http://localhost:8080/orcamentos/${savedOrcamento.id}/pdf`);
+            })
+            .then(response => response.blob())
+            .then(pdfBlob => {
+              const url = URL.createObjectURL(pdfBlob);
+              window.open(url, '_blank');
+            })
+            .catch(error => {
+              alert('Erro: ' + error.message);
+            });
+  });
+</script>
+</body>
+</html>
